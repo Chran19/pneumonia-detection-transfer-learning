@@ -2,7 +2,7 @@
 
 GitHub Python TensorFlow Keras Accuracy
 
-Repository: [Your-GitHub-Repo-Link](https://github.com)
+Repository: [pneumonia-detection-transfer-learning](https://github.com/Chran19/pneumonia-detection-transfer-learning)
 
 ## Project Overview
 
@@ -77,7 +77,7 @@ Output Layer (256 → 1, Sigmoid activation)
 
 ### Classification Performance
 
-| Fault Type | Precision | Recall | F1-Score |
+| Class Type | Precision | Recall | F1-Score |
 | ---------- | --------- | ------ | -------- |
 | NORMAL     | 0.86      | 0.71   | 0.78     |
 | PNEUMONIA  | 0.84      | 0.93   | 0.88     |
@@ -136,7 +136,7 @@ print(f"Class: {class_name}, Confidence: {confidence:.4f}")
 - **Callbacks Integration** - EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 - **Comprehensive Evaluation** - Confusion matrix, classification report, and metrics
 - **Model Persistence** - Save and load trained model in Keras format
-- **Research Comparison** - Side-by-side comparison with Kermany et al. paper results
+- **Research Comparison** - Side-by-side comparison with Rajpurkar et al. (CheXNet) paper results
 
 ## Dataset Description
 
@@ -195,3 +195,8 @@ This project is developed for educational purposes as part of a neural networks 
 ---
 
 **Developed by Team**
+
+- Yashwardhan Jangid (202301100007)
+- Shreyash Kumbhar (202301100032)
+- Ranjeet Choudhary (202301100046)
+- Rishabh Rai (202301100047)
