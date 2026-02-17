@@ -25,6 +25,15 @@ Assignment-2/
 ├── requirements.txt                         # Python dependencies
 ├── README.md                                # This file
 ├── pneumonia_vgg16_model.keras             # Saved model weights
+├── images/                                  # Saved plots and visualizations
+│   ├── sample_xray_images.png
+│   ├── class_distribution.png
+│   ├── augmented_images.png
+│   ├── feature_maps.png
+│   ├── sample_predictions.png
+│   ├── confusion_matrix.png
+│   ├── training_history.png
+│   └── performance_comparison.png
 └── chest_xray/                              # Dataset directory
     ├── train/
     │   ├── NORMAL/       (1,341 images)
@@ -42,52 +51,81 @@ Assignment-2/
 ```
 Input Layer (224×224×3 images)
         ↓
-VGG16 Base Model (Pre-trained, All Layers Frozen)
+VGG16 Base Model (Pre-trained, block5 fine-tuned)
         ↓
 GlobalAveragePooling2D (7×7×512 → 512)
         ↓
-Dense Layer (512 → 256, ReLU activation)
+BatchNormalization
         ↓
-Dropout (0.5)
+Dense Layer (512, ReLU activation)
         ↓
-Output Layer (256 → 1, Sigmoid activation)
+Dropout (0.4)
+        ↓
+Dense Layer (256, ReLU activation)
+        ↓
+BatchNormalization
+        ↓
+Dropout (0.3)
+        ↓
+Output Layer (1, Sigmoid activation)
 ```
 
 ### Features Used
 
 - Image Input: 224×224 pixels, RGB channels (3)
 - Pre-trained Weights: ImageNet
-- Total VGG16 Parameters: 14,714,688 (56.13 MB)
-- Trainable Parameters: 131,585 (514 KB)
-- Non-trainable Parameters: 14,714,688 (56.13 MB)
+- Fine-tuning: VGG16 block5 layers unfrozen
+- Total Parameters: 15,112,001 (57.65 MB)
+- Trainable Parameters: 7,475,201 (28.52 MB)
+- Non-trainable Parameters: 7,636,800 (29.13 MB)
 
 ## Results
 
 | Metric            | Value  |
 | ----------------- | ------ |
-| Training Accuracy | 90.00% |
-| Testing Accuracy  | 84.78% |
-| Precision         | 84.38% |
-| Recall            | 92.82% |
-| F1-Score          | 88.40% |
-| Total Epochs      | 10     |
+| Training Accuracy | 97.50% |
+| Testing Accuracy  | 92.95% |
+| Precision         | 92.61% |
+| Recall            | 96.41% |
+| F1-Score          | 94.47% |
+| Total Epochs      | 20     |
 | Learning Rate     | 0.0001 |
 | Optimizer         | Adam   |
 | Batch Size        | 32     |
+
+### Performance Comparison with Research Paper
+
+| Metric    | CheXNet (Rajpurkar et al.) | Our Implementation | Difference |
+| --------- | -------------------------- | ------------------ | ---------- |
+| Accuracy  | 92.80%                     | 92.95%             | +0.15%     |
+| Precision | 93.20%                     | 92.61%             | -0.59%     |
+| Recall    | 93.90%                     | 96.41%             | +2.51%     |
+| F1-Score  | 93.50%                     | 94.47%             | +0.97%     |
 
 ### Classification Performance
 
 | Class Type | Precision | Recall | F1-Score |
 | ---------- | --------- | ------ | -------- |
-| NORMAL     | 0.86      | 0.71   | 0.78     |
-| PNEUMONIA  | 0.84      | 0.93   | 0.88     |
+| NORMAL     | 0.94      | 0.87   | 0.90     |
+| PNEUMONIA  | 0.93      | 0.96   | 0.94     |
 
 ### Confusion Matrix Summary
 
-- **True Negatives (NORMAL correctly classified):** 167
-- **True Positives (PNEUMONIA correctly classified):** 362
-- **False Positives (NORMAL misclassified as PNEUMONIA):** 67
-- **False Negatives (PNEUMONIA misclassified as NORMAL):** 28
+- **True Negatives (NORMAL correctly classified):** 204
+- **True Positives (PNEUMONIA correctly classified):** 376
+- **False Positives (NORMAL misclassified as PNEUMONIA):** 30
+- **False Negatives (PNEUMONIA misclassified as NORMAL):** 14
+
+### Visualizations
+
+| | |
+|---|---|
+| ![Class Distribution](images/class_distribution.png) | ![Confusion Matrix](images/confusion_matrix.png) |
+| Class Distribution | Confusion Matrix |
+| ![Training History](images/training_history.png) | ![Performance Comparison](images/performance_comparison.png) |
+| Training History | Performance Comparison |
+| ![Sample Predictions](images/sample_predictions.png) | ![Feature Maps](images/feature_maps.png) |
+| Sample Predictions | Feature Maps |
 
 ## Getting Started
 
@@ -165,10 +203,11 @@ The dataset contains 5,856 pediatric chest X-ray images with the following attri
 ### Task 2: Model Development & Training
 
 - Load VGG16 pre-trained on ImageNet
-- Freeze all VGG16 layers to preserve learned features
-- Build custom classification head with dropout
-- Compile model with Adam optimizer and binary cross-entropy loss
-- Train with callbacks: EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
+- Fine-tune VGG16 block5 convolutional layers
+- Build custom classification head with BatchNormalization and Dropout
+- Apply class weights to handle data imbalance (NORMAL: 1.94, PNEUMONIA: 0.67)
+- Compile model with Adam optimizer (lr=1e-4) and binary cross-entropy loss
+- Train for 20 epochs with callbacks: EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 - Save trained model in Keras format
 
 ### Task 3: Evaluation & Comparison
